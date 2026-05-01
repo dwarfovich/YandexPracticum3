@@ -1,9 +1,9 @@
 #pragma once
 
 #include <format>
+#include <limits>
 #include <stdexcept>
 #include <string_view>
-#include <limits>
 
 namespace bookdb {
 
@@ -14,22 +14,22 @@ inline static constexpr std::string_view invalid_author = "";
 enum class Genre { Fiction, NonFiction, SciFi, Biography, Mystery, Unknown };
 
 constexpr Genre GenreFromString(std::string_view s) {
-    if (s == "Fiction"){
+    if (s == "Fiction") {
         return Genre::Fiction;
-    } else if (s == "NonFiction"){
+    } else if (s == "NonFiction") {
         return Genre::NonFiction;
-    } else if (s == "SciFi"){
+    } else if (s == "SciFi") {
         return Genre::SciFi;
-    } else if (s == "Biography"){
+    } else if (s == "Biography") {
         return Genre::Biography;
-    } else if (s == "Mystery"){
+    } else if (s == "Mystery") {
         return Genre::Mystery;
     } else {
         return Genre::Unknown;
     }
 }
 
-constexpr std::string_view ToStringView(Genre genre){
+constexpr std::string_view ToStringView(Genre genre) {
     switch (genre) {
     case bookdb::Genre::Fiction:
         return "Fiction";
@@ -47,18 +47,20 @@ constexpr std::string_view ToStringView(Genre genre){
 }
 
 struct Book {
-    constexpr Book()=default;
-    constexpr Book(Genre g) : genre{g}{}
-    constexpr Book(std::string_view newGenre)
-        : genre{GenreFromString(newGenre)} {}
+    constexpr Book() = default;
+    constexpr Book(Genre g) : genre{g} {}
+    constexpr Book(std::string t, const std::string_view &a, int y, Genre g, double r, int rc)
+        : author{a}, title{t}, year{y}, genre{g}, rating{r}, read_count{rc} {}
+    constexpr Book(std::string_view newGenre) : genre{GenreFromString(newGenre)} {}
 
-    std::string_view author = invalid_author;
     std::string title;
+    std::string_view author = invalid_author;
     int year = invalid_year;
     Genre genre = Genre::Unknown;
     double rating = invalid_rating;
     int read_count = 0;
 };
+
 }  // namespace bookdb
 
 namespace std {
@@ -74,6 +76,15 @@ struct formatter<bookdb::Genre, char> {
     }
 };
 
-// Ваш код для std::formatter<Book> здесь
-
 }  // namespace std
+
+// MSVC deprecates injecting some classes into namespace, so we use specialization of standard class.
+template <>
+struct std::formatter<bookdb::Book, char> {
+    template <typename FormatContext>
+    auto format(const bookdb::Book &b, FormatContext &fc) const {
+        return std::format_to(fc.out(), "{} | {} | {} | {}", b.title, b.author, b.genre, b.year);
+    }
+
+    constexpr auto parse(std::format_parse_context &ctx) { return ctx.begin(); }
+};

@@ -7,25 +7,14 @@
 
 #include <iostream>
 #include <boost/container/flat_set.hpp>
+#include <unordered_set>
+#include <vector>
 
 using namespace bookdb;
 
 int main() {
-    Genre g1 = Genre::Fiction;
-    Genre g2 = Genre::SciFi;
-    Genre g3 = Genre::Biography;
-    Genre g4 = static_cast<Genre>(999);  // проверка default
-
-    std::cout << std::format("g1 = {}\n", g1);
-    std::cout << std::format("g2 = {}\n", g2);
-    std::cout << std::format("g3 = {}\n", g3);
-
-    try {
-        std::cout << std::format("g4 = {}\n", g4);
-    } catch (const std::exception &e) {
-        std::cout << "Exception: " << e.what() << "\n";
-    }
-
+    
+    
     // Ниже приведён пример работы `BookDatabase`.
     //
     //     - Обратите внимание, что в этой функции реализованы основные возможности, охватывающие как обязательные, так
@@ -35,12 +24,9 @@ int main() {
     //
 
     // Create a book database
-    BookDatabase<std::vector<Book>> db;
-
-    /*
-
-    Код закомментирован, чтобы не приводить к ошибке компиляции
-
+    BookDatabase<std::vector<Book>> db{{"1984", "George Orwell", 1949, Genre::SciFi, 4., 190}};
+    Book b("1984", "George Orwell", 1949, Genre::SciFi, 4., 190);
+    db.PushBack(b);
     // Add some books
     db.EmplaceBack("1984", "George Orwell", 1949, Genre::SciFi, 4., 190);
     db.EmplaceBack("Animal Farm", "George Orwell", 1945, Genre::Fiction, 4.4, 143);
@@ -53,13 +39,13 @@ int main() {
     db.EmplaceBack("The Hobbit", "J.R.R. Tolkien", 1937, Genre::Fiction, 4.9, 203);
     db.EmplaceBack("Lord of the Flies", "William Golding", 1954, Genre::Fiction, 4.2, 89);
     std::print("Books: {}\n\n", db);
-
     // Sorts
     std::sort(db.begin(), db.end(), comp::LessByAuthor{});
     std::print("Books sorted by author: {}\n\n==================\n", db);
 
     std::sort(db.begin(), db.end(), comp::LessByPopularity{});
     std::print("Books sorted by popularity: {}\n\n==================\n", db);
+    /*
 
     // Author histogram
     auto histogram = buildAuthorHistogramFlat(db);
