@@ -1,12 +1,14 @@
-#include <algorithm>
 
 #include "book_database.hpp"
 #include "comparators.hpp"
 #include "filters.hpp"
 #include "statsistics.hpp"
 
-#include <iostream>
 #include <boost/container/flat_set.hpp>
+#include <boost/version.hpp>
+
+#include <algorithm>
+#include <iostream>
 #include <unordered_set>
 #include <vector>
 #include <deque>
@@ -23,7 +25,7 @@ int main() {
     //       которые не обязательны к реализации для сдачи работы.
     //     - Не забудьте перед созданием коммита вызвать 'run_clang_format.sh' для форматирования кода
     //
-
+    std::cout << BOOST_LIB_VERSION << std::endl;
     // Create a book database
     BookDatabase<std::deque<Book>> ddb{{"1984", "George Orwell", 1949, Genre::SciFi, 4., 190}};
     BookDatabase<std::list<Book>> ldb{{"1984", "George Orwell", 1949, Genre::SciFi, 4., 190}};
@@ -66,10 +68,22 @@ int main() {
     auto genreRatings = calculateGenreRatings(db.begin(), db.end());
     std::print("\n\nAverage ratings by genres: {}\n", genreRatings);
 
-    /*
     auto avrRating = calculateAverageRating(db);
     std::print("Average books rating in library: {}\n", avrRating);
 
+    std::cout << "\nRandom books:\n";
+    auto randomBooks = sampleRandomBooks(db, 5);
+    for (const auto& book : randomBooks){
+        std::print("- {}\n", book.get());
+    }
+
+    std::cout << "\nTop books:\n";
+    auto topBooks = getTopNBy(db, 5);
+    for (const auto &book : topBooks) {
+        std::print("- {}\n", book.get());
+    }
+
+    /*
     // Filters
     auto filtered = filterBooks(db.begin(), db.end(), all_of(YearBetween(1900, 1999), RatingAbove(4.5)));
     std::print("\n\nBooks from the 20th century with rating ≥ 4.5:\n");

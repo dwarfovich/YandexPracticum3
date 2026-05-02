@@ -12,7 +12,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 # Ищем необходимые библиотеки
-find_package(Boost REQUIRED COMPONENTS Container)
+find_package(Boost 1.90 REQUIRED COMPONENTS container unordered)
 find_package(GTest REQUIRED)
 
 file(GLOB HEADER_FILES "${CMAKE_SOURCE_DIR}/include/*.hpp")

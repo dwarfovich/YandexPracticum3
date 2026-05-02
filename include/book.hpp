@@ -3,6 +3,7 @@
 #include <format>
 #include <limits>
 #include <stdexcept>
+#include <string>
 #include <string_view>
 
 namespace bookdb {
@@ -64,6 +65,7 @@ struct Book {
 }  // namespace bookdb
 
 namespace std {
+
 template <>
 struct formatter<bookdb::Genre, char> {
     template <typename FormatContext>
@@ -71,20 +73,21 @@ struct formatter<bookdb::Genre, char> {
         return format_to(fc.out(), "{}", ToStringView(g));
     }
 
-    constexpr auto parse(format_parse_context &ctx) {
+    constexpr auto parse(format_parse_context &ctx) const {
+        return ctx.begin();  // Просто игнорируем пользовательский формат
+    }
+};
+
+template <>
+struct formatter<bookdb::Book, char> {
+    template <typename FormatContext>
+    auto format(const bookdb::Book& b, FormatContext &fc) const {
+        return std::format_to(fc.out(), "{} | {} | {} | {}", b.title, b.author, b.genre, b.year);
+    }
+
+    constexpr auto parse(format_parse_context &ctx) const {
         return ctx.begin();  // Просто игнорируем пользовательский формат
     }
 };
 
 }  // namespace std
-
-// MSVC deprecates injecting some classes into namespace, so we use specialization of standard class.
-template <>
-struct std::formatter<bookdb::Book, char> {
-    template <typename FormatContext>
-    auto format(const bookdb::Book &b, FormatContext &fc) const {
-        return std::format_to(fc.out(), "{} | {} | {} | {}", b.title, b.author, b.genre, b.year);
-    }
-
-    constexpr auto parse(std::format_parse_context &ctx) { return ctx.begin(); }
-};
