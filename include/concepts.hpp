@@ -8,13 +8,18 @@
 namespace bookdb {
 
 template <typename T>
-concept BookContainerLike = true;
+concept BookIterator = std::bidirectional_iterator<T>;
 
 template <typename T>
-concept BookIterator = true;
+concept BookContainerLike = BookIterator<typename T::iterator> &&
+                            std::is_same_v<bookdb::Book, typename T::value_type> && requires(T a, bookdb::Book book) {
+                                a.push_back(book);
+                                a.emplace_back(book);
+                                { a.back() } -> std::same_as<bookdb::Book&>;
+                            };
 
 template <typename S, typename I>
-concept BookSentinel = true;
+concept BookSentinel = BookIterator<I> && std::sentinel_for<S, I>;
 
 template <typename P>
 concept BookPredicate = true;

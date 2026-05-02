@@ -26,7 +26,7 @@ public:
     using iterator = BookContainer::iterator;
     using const_iterator = BookContainer::const_iterator;
 
-    using AuthorContainer = std::unordered_set<std::string>;
+    using AuthorContainer = std::unordered_set<std::string, TransparentStringHash, std::equal_to<>>;
 
     BookDatabase() = default;
     BookDatabase(std::initializer_list<Book> books) {
@@ -66,8 +66,12 @@ public:
 
 private:  // methods
     void AddBook(Book &&book) {
-        const auto &[iter, inserted] = authors_.insert(std::string{book.author});
-        book.author = *iter;
+        auto iter = authors_.find(book.author);
+        // We assume that the current author is most probable had been already inserted, tradeoff - excess hashing for new author.
+        if (iter == authors_.cend()){
+            const auto &[iter, inserted] = authors_.insert(std::string{book.author});
+            book.author = *iter;
+        }
         books_.push_back(std::move(book));
     }
 

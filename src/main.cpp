@@ -9,6 +9,7 @@
 #include <boost/container/flat_set.hpp>
 #include <unordered_set>
 #include <vector>
+#include <deque>
 
 using namespace bookdb;
 
@@ -24,6 +25,17 @@ int main() {
     //
 
     // Create a book database
+    BookDatabase<std::deque<Book>> ddb{{"1984", "George Orwell", 1949, Genre::SciFi, 4., 190}};
+    BookDatabase<std::list<Book>> ldb{{"1984", "George Orwell", 1949, Genre::SciFi, 4., 190}};
+    std::vector<Book> vb;
+    std::unordered_set<std::string, TransparentStringHash, std::equal_to<>> s;
+    //s.insert("Hello");
+    //s.insert(std::string("Hello"));
+    //s.insert("Hello");
+    //std::string_view sv = "hello";
+    //s.find(sv);
+    //s.find("hello");
+
     BookDatabase<std::vector<Book>> db{{"1984", "George Orwell", 1949, Genre::SciFi, 4., 190}};
     Book b("1984", "George Orwell", 1949, Genre::SciFi, 4., 190);
     db.PushBack(b);
@@ -45,7 +57,6 @@ int main() {
 
     std::sort(db.begin(), db.end(), comp::LessByPopularity{});
     std::print("Books sorted by popularity: {}\n\n==================\n", db);
-    /*
 
     // Author histogram
     auto histogram = buildAuthorHistogramFlat(db);
@@ -55,6 +66,7 @@ int main() {
     auto genreRatings = calculateGenreRatings(db.begin(), db.end());
     std::print("\n\nAverage ratings by genres: {}\n", genreRatings);
 
+    /*
     auto avrRating = calculateAverageRating(db);
     std::print("Average books rating in library: {}\n", avrRating);
 
