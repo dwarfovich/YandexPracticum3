@@ -50,7 +50,7 @@ constexpr std::string_view ToStringView(Genre genre) {
 struct Book {
     constexpr Book() = default;
     constexpr Book(Genre g) : genre{g} {}
-    constexpr Book(std::string t, const std::string_view &a, int y, Genre g, double r, int rc)
+    constexpr Book(std::string t, const std::string_view &a, int y = invalid_year, Genre g = Genre::Unknown, double r = invalid_rating, int rc = 0)
         : author{a}, title{t}, year{y}, genre{g}, rating{r}, read_count{rc} {}
     constexpr Book(std::string_view newGenre) : genre{GenreFromString(newGenre)} {}
 
