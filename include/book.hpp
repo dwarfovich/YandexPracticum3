@@ -82,7 +82,7 @@ template <>
 struct formatter<bookdb::Book, char> {
     template <typename FormatContext>
     auto format(const bookdb::Book& b, FormatContext &fc) const {
-        return std::format_to(fc.out(), "{} | {} | {} | {}", b.title, b.author, b.genre, b.year);
+        return std::format_to(fc.out(), "{} | {} | {} | {} | {}", b.title, b.author, b.genre, b.year, b.rating);
     }
 
     constexpr auto parse(format_parse_context &ctx) const {
