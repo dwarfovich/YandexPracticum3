@@ -159,7 +159,7 @@ TEST(TestStatistics, TestHistogram) {
     db.EmplaceBack("1", "a");
     histogram = buildAuthorHistogramFlat(db);
     ASSERT_EQ(histogram.size(), 1);
-    
+
     db.EmplaceBack("2", "a");
     histogram = buildAuthorHistogramFlat(db);
     ASSERT_EQ(histogram.size(), 1);
@@ -178,14 +178,6 @@ TEST(TestStatistics, TestHistogram) {
     ASSERT_EQ(histogram["b"], 1);
 }
 
-/*
- std::string title;
-    std::string_view author = invalid_author;
-    int year = invalid_year;
-    Genre genre = Genre::Unknown;
-    double rating = invalid_rating;
-    int read_count = 0;
-    */
 TEST(TestStatistics, TestCalculateGenreRatings) {
     BookDatabase<std::deque<Book>> db;
     auto genreRatings = calculateGenreRatings(db.begin(), db.end());
@@ -205,5 +197,24 @@ TEST(TestStatistics, TestCalculateGenreRatings) {
     ASSERT_DOUBLE_EQ(genreRatings[Genre::Fiction].first, 2.);
 }
 
-TEST(TestStatistics, TestCalculateGenreRatings) {
-    }
+TEST(TestStatistics, TestGetTopNEmptyDb) {
+    BookDatabase<std::vector<Book>> db;
+    auto topBooks = getTopNBy(db, 0);
+    ASSERT_TRUE(topBooks.empty());
+}
+
+TEST(TestStatistics, TestGetTopN) {
+    BookDatabase<std::vector<Book>> db;
+    db.EmplaceBack("1", "d", 1900, Genre::Biography, 4., 4);
+    db.EmplaceBack("1", "c", 1900, Genre::Biography, 3., 3);
+    db.EmplaceBack("1", "b", 1900, Genre::Biography, 2., 2);
+    db.EmplaceBack("1", "a", 1900, Genre::Biography, 1., 1);
+    auto topBooks = getTopNBy(db, 1);
+    ASSERT_EQ(topBooks.size(), 1);
+    ASSERT_EQ(topBooks.front().get().author, "a");
+
+    topBooks = getTopNBy(db, 2);
+    ASSERT_EQ(topBooks.size(), 2);
+    ASSERT_EQ(topBooks.front().get().author, "a");
+    ASSERT_EQ((topBooks.begin()+ 1)->get().author, "b");
+}

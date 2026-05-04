@@ -11,7 +11,7 @@ struct LessByAuthor {
 };
 
 struct LessByPopularity {
-    bool operator()(const Book &lhs, const Book &rhs) { return lhs.rating < rhs.rating; }
+    bool operator()(const Book &lhs, const Book &rhs) { return lhs.read_count < rhs.read_count; }
 };
 
 struct LessByRating {
